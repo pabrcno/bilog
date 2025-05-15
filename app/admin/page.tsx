@@ -12,17 +12,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Plus, User } from "lucide-react"
-import { PageLayout } from "@/components/page-layout"
-import { CalendarSidebar } from "@/components/calendar-sidebar"
-import { Section } from "@/components/section"
-import { AppointmentList } from "@/components/appointment-list"
-import { TimeSlotList } from "@/components/time-slot-list"
+import { Plus } from "lucide-react"
+import { PageLayout } from "@/components/ui/page-layout"
+import { CalendarSidebar } from "@/components/ui/calendar-sidebar"
+import { Section } from "@/components/ui/section"
+import { AppointmentList } from "@/components/ui/appointment-list"
+import { TimeSlotList } from "@/components/ui/time-slot-list"
 import { AddTimeSlotForm } from "@/components/add-time-slot-form"
 import { showSuccess, showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
-import { StatusIndicator } from "@/components/status-badge"
-import { DateHeader } from "@/components/date-header"
+import { StatusIndicator } from "@/components/ui/status-indicator"
+import { DateHeader } from "@/components/ui/date-header"
 
 export default function AdminPage() {
   const [date, setDate] = useState<Date | undefined>(new Date())

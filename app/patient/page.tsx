@@ -11,17 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { PageLayout } from "@/components/page-layout"
-import { CalendarSidebar } from "@/components/calendar-sidebar"
-import { Section } from "@/components/section"
-import { AppointmentList } from "@/components/appointment-list"
-import { TimeSlotList } from "@/components/time-slot-list"
-import { BookingConfirmationForm } from "@/components/booking-confirmation-form"
+import { PageLayout } from "@/components/ui/page-layout"
+import { CalendarSidebar } from "@/components/ui/calendar-sidebar"
+import { Section } from "@/components/ui/section"
+import { AppointmentList } from "@/components/ui/appointment-list"
+import { TimeSlotList } from "@/components/ui/time-slot-list"
+import { BookingConfirmationForm } from "@/components/ui/booking-confirmation-form"
 import { showSuccess, showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
 import { TimeSlot, User } from "@/db/schema"
-import { StatusIndicator } from "@/components/status-badge"
-import { DateHeader } from "@/components/date-header"
+import { StatusIndicator } from "@/components/ui/status-indicator"
+import { DateHeader } from "@/components/ui/date-header"
 
 export default function PatientDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -91,7 +91,7 @@ export default function PatientDashboard() {
 
   const pendingAppointments = getAppointmentsByStatus("pending")
   const confirmedAppointments = getAppointmentsByStatus("confirmed")
-
+  const rejectedAppointments = getAppointmentsByStatus("rejected")
 
   return (
     <PageLayout userName={userName} userRole="patient">
@@ -104,7 +104,7 @@ export default function PatientDashboard() {
               <div className="space-y-3 text-sm">
                 <StatusIndicator label="Pending" status="pending" count={pendingAppointments.length} />
                 <StatusIndicator label="Confirmed" status="confirmed" count={confirmedAppointments.length} />
-    
+                <StatusIndicator label="Rejected" status="rejected" count={rejectedAppointments.length} />
               </div>
             </Section>
           </div>
@@ -113,7 +113,7 @@ export default function PatientDashboard() {
             <DateHeader 
               date={date} 
               formatDate={formatDate} 
-          
+       
             />
 
             <Tabs 
@@ -131,7 +131,9 @@ export default function PatientDashboard() {
                 <TabsTrigger value="confirmed" color="green">
                   Confirmed ({confirmedAppointments.length})
                 </TabsTrigger>
-              
+                <TabsTrigger value="rejected" color="red">
+                  Rejected ({rejectedAppointments.length})
+                </TabsTrigger>
               </TabsList>
 
               <div className="p-6">
@@ -183,7 +185,20 @@ export default function PatientDashboard() {
                   </Section>
                 </TabsContent>
 
-               
+                <TabsContent value="rejected">
+                  <Section 
+                    title="Rejected Appointments" 
+                    description="Appointments that have been rejected"
+                    variant="transparent"
+                  >
+                    <AppointmentList
+                      appointments={rejectedAppointments}
+                      isLoading={isLoadingAppointments}
+                      emptyTitle="No rejected appointments"
+                      emptyDescription="You don't have any rejected appointments."
+                    />
+                  </Section>
+                </TabsContent>
               </div>
             </Tabs>
           </div>
