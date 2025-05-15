@@ -20,6 +20,8 @@ import { BookingConfirmationForm } from "@/components/booking-confirmation-form"
 import { showSuccess, showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
 import { TimeSlot, User } from "@/db/schema"
+import { StatusIndicator } from "@/components/status-badge"
+import { DateHeader } from "@/components/date-header"
 
 export default function PatientDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -27,6 +29,7 @@ export default function PatientDashboard() {
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: User } | null>(null)
   const [cancelConfirmation, setCancelConfirmation] = useState<{ appointmentId: number; timeSlotId: number } | null>(null)
   const [userName, setUserName] = useState("John Smith")
+  const [activeTab, setActiveTab] = useState("book")
 
   // tRPC queries and mutations
   const { data: currentUser } = trpc.auth.getCurrentUser.useQuery()
@@ -77,68 +80,119 @@ export default function PatientDashboard() {
   }
 
   const handleCancelAppointment = (appointmentId: number, timeSlotId: number) => {
-    console.log("Cancelling appointment", appointmentId)
+    
     cancelAppointmentMutation.mutate({ appointmentId, timeSlotId })
   }
 
+  // Organize appointments by status
+  const getAppointmentsByStatus = (status: string) => {
+    return appointments?.filter(appointment => appointment.status === status) || []
+  }
+
+  const pendingAppointments = getAppointmentsByStatus("pending")
+  const confirmedAppointments = getAppointmentsByStatus("confirmed")
+
+
   return (
     <PageLayout userName={userName} userRole="patient">
-      <div className="grid md:grid-cols-[300px_1fr] gap-6">
-        <CalendarSidebar date={date} setDate={setDate} />
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">{date ? formatDate(date) : "Select a date"}</h2>
+      <div className="container max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
+          <div className="space-y-6">
+            <CalendarSidebar date={date} setDate={setDate} />
+            
+            <Section title="Appointment Status" variant="sidebar">
+              <div className="space-y-3 text-sm">
+                <StatusIndicator label="Pending" status="pending" count={pendingAppointments.length} />
+                <StatusIndicator label="Confirmed" status="confirmed" count={confirmedAppointments.length} />
+    
+              </div>
+            </Section>
           </div>
 
-          <Tabs defaultValue="book" className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            <TabsList className="p-1 bg-gray-100 rounded-t-lg border-b border-gray-200">
-              <TabsTrigger value="book" className="rounded data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                Book Appointment
-              </TabsTrigger>
-              <TabsTrigger
-                value="my-appointments"
-                className="rounded data-[state=active]:bg-white data-[state=active]:shadow-sm"
-              >
-                My Appointments
-              </TabsTrigger>
-            </TabsList>
+          <div className="space-y-6">
+            <DateHeader 
+              date={date} 
+              formatDate={formatDate} 
+          
+            />
 
-            <div className="p-6">
-              <TabsContent value="book">
-                <Section
-                  title="Available Time Slots"
-                  description="Select an available time slot to book your appointment"
-                >
-                  <TimeSlotList
-                    timeSlots={timeSlots || []}
-                    isLoading={isLoadingTimeSlots}
-                    onSelect={handleSelectTimeSlot}
-                    emptyTitle="No available time slots"
-                    emptyDescription="Please select another day to see available appointments."
-                  />
-                </Section>
-              </TabsContent>
+            <Tabs 
+              defaultValue="book" 
+              onValueChange={setActiveTab} 
+              value={activeTab}
+            >
+              <TabsList>
+                <TabsTrigger value="book" color="blue">
+                  Book Appointment
+                </TabsTrigger>
+                <TabsTrigger value="pending" color="amber">
+                  Pending ({pendingAppointments.length})
+                </TabsTrigger>
+                <TabsTrigger value="confirmed" color="green">
+                  Confirmed ({confirmedAppointments.length})
+                </TabsTrigger>
+              
+              </TabsList>
 
-              <TabsContent value="my-appointments">
-                <Section title="My Appointments" description="View and manage your upcoming dental appointments">
-                  <AppointmentList
-                    appointments={appointments ?? []}
-                    isLoading={isLoadingAppointments}
-                    onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
-                    emptyTitle="No appointments"
-                    emptyDescription="You don't have any upcoming appointments."
-                  />
-                </Section>
-              </TabsContent>
-            </div>
-          </Tabs>
+              <div className="p-6">
+                <TabsContent value="book">
+                  <Section
+                    title="Available Time Slots"
+                    description="Select an available time slot to book your appointment"
+                    variant="transparent"
+                  >
+                    <TimeSlotList
+                      timeSlots={timeSlots || []}
+                      isLoading={isLoadingTimeSlots}
+                      onSelect={handleSelectTimeSlot}
+                      emptyTitle="No available time slots"
+                      emptyDescription="Please select another day to see available appointments."
+                    />
+                  </Section>
+                </TabsContent>
+
+                <TabsContent value="pending">
+                  <Section 
+                    title="Pending Appointments" 
+                    description="Appointments awaiting confirmation"
+                    variant="transparent"
+                  >
+                    <AppointmentList
+                      appointments={pendingAppointments}
+                      isLoading={isLoadingAppointments}
+                      onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
+                      emptyTitle="No pending appointments"
+                      emptyDescription="You don't have any pending appointments."
+                    />
+                  </Section>
+                </TabsContent>
+
+                <TabsContent value="confirmed">
+                  <Section 
+                    title="Confirmed Appointments" 
+                    description="Appointments confirmed by the dentist"
+                    variant="transparent"
+                  >
+                    <AppointmentList
+                      appointments={confirmedAppointments}
+                      isLoading={isLoadingAppointments}
+                      onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
+                      emptyTitle="No confirmed appointments"
+                      emptyDescription="You don't have any confirmed appointments."
+                    />
+                  </Section>
+                </TabsContent>
+
+               
+              </div>
+            </Tabs>
+          </div>
         </div>
       </div>
 
       {/* Booking Confirmation Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Appointment</DialogTitle>
             <DialogDescription>Please confirm your appointment details.</DialogDescription>
@@ -156,7 +210,7 @@ export default function PatientDashboard() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={cancelConfirmation !== null} onOpenChange={() => setCancelConfirmation(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Cancel Appointment</DialogTitle>
             <DialogDescription>
@@ -172,6 +226,7 @@ export default function PatientDashboard() {
               variant="destructive"
               onClick={() => cancelConfirmation !== null && handleCancelAppointment(cancelConfirmation.appointmentId, cancelConfirmation.timeSlotId)}
               disabled={cancelAppointmentMutation.isPending}
+              className="ml-2 sm:ml-0"
             >
               {cancelAppointmentMutation.isPending ? "Cancelling..." : "Cancel Appointment"}
             </Button>

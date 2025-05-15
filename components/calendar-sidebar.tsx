@@ -16,7 +16,7 @@ export function CalendarSidebar({ date, setDate, children }: CalendarSidebarProp
   return (
     <div className="space-y-6">
       <Card className="border border-gray-200 shadow-sm">
-        <CardContent className="p-4">
+        <CardContent className="p-4 flex justify-center items-center">
           <Calendar
             mode="single"
             selected={date}

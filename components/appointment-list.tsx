@@ -4,15 +4,16 @@ import { Appointment, TimeSlot, User } from "@/db/schema"
 
 interface AppointmentListProps {
   appointments: (Appointment & {
-    patient: User
+    patient: { name: string }
     timeSlot: TimeSlot & {
-      dentist: User
+      dentist: { name: string }
     }
   })[]
   isLoading: boolean
   isAdmin?: boolean
   onCancel?: (appointmentId: number, timeSlotId: number) => void
   onConfirm?: (appointmentId: number) => void
+  onReject?: (appointmentId: number, timeSlotId: number) => void
   emptyTitle?: string
   emptyDescription?: string
 }
@@ -23,6 +24,7 @@ export function AppointmentList({
   isAdmin = false,
   onCancel,
   onConfirm,
+  onReject,
   emptyTitle = "No appointments",
   emptyDescription = "There are no appointments to display.",
 }: AppointmentListProps) {
@@ -34,12 +36,18 @@ export function AppointmentList({
     return <EmptyState title={emptyTitle} description={emptyDescription} />
   }
 
-  console.log(appointments)
+  // Sort appointments so that canceled ones are at the end
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const aCanceled = a.status === "cancelled"
+    const bCanceled = b.status === "cancelled"
+    if (aCanceled === bCanceled) return 0
+    if (aCanceled) return 1
+    return -1
+  })
 
   return (
     <div className="space-y-4">
-
-      {appointments.map((appointment) => (
+      {sortedAppointments.map((appointment) => (
         <AppointmentCard
           key={appointment.id}
           id={appointment.id}
@@ -52,6 +60,7 @@ export function AppointmentList({
           isAdmin={isAdmin}
           onCancel={onCancel}
           onConfirm={onConfirm}
+          onReject={onReject}
         />
       ))}
     </div>

@@ -2,17 +2,11 @@
 
 import { TimeSlotCard } from "@/components/time-slot-card"
 import { EmptyState } from "@/components/empty-state"
+import { TimeSlot } from "@/db/schema"
 
-interface TimeSlot {
-  id: number
-  startTime: string | Date
-  duration: number
-  dentistName?: string
-  dentistSpecialty?: string
-}
 
 interface TimeSlotListProps {
-  timeSlots: TimeSlot[]
+  timeSlots:( TimeSlot & { dentist: { name: string } })[]
   isLoading: boolean
   isAdmin?: boolean
   onSelect?: (slot: TimeSlot) => void
@@ -46,8 +40,7 @@ export function TimeSlotList({
           id={slot.id}
           date={new Date(slot.startTime)}
           duration={slot.duration}
-          dentistName={slot.dentistName}
-          dentistSpecialty={slot.dentistSpecialty || "General Dentist"}
+          dentistName={slot.dentist.name}
           onSelect={onSelect ? () => onSelect(slot) : undefined}
           onDelete={onDelete ? () => onDelete(slot.id) : undefined}
           isAdmin={isAdmin}

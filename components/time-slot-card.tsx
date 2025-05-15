@@ -9,7 +9,7 @@ interface TimeSlotCardProps {
   id: number
   date: Date
   duration: number
-  dentistName?: string
+  dentistName: string
   dentistSpecialty?: string
   onSelect?: () => void
   onDelete?: () => void
@@ -20,7 +20,7 @@ export function TimeSlotCard({
   id,
   date,
   duration,
-  dentistName = "Dr. Smith",
+  dentistName,
   dentistSpecialty = "General Dentist",
   onSelect,
   onDelete,

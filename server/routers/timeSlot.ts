@@ -40,7 +40,7 @@ export const timeSlotRouter = router({
           isAvailable: true,
         })
 
-        revalidatePath("/admin")
+  
         return { success: true }
       } catch (error) {
         console.error("Error creating time slot:", error)
@@ -69,7 +69,12 @@ export const timeSlotRouter = router({
           eq(timeSlots.isAvailable, true),
         ),
         with: {
-          dentist: true,
+          dentist: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
         },
         orderBy: (timeSlots, { asc }) => [asc(timeSlots.startTime)],
       })
@@ -90,7 +95,7 @@ export const timeSlotRouter = router({
     try {
       await db.delete(timeSlots).where(eq(timeSlots.id, input.id))
 
-      revalidatePath("/admin")
+     
       return { success: true }
     } catch (error) {
       console.error("Error deleting time slot:", error)

@@ -5,7 +5,21 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
-const Tabs = TabsPrimitive.Root
+const Tabs = React.forwardRef<
+  React.ComponentRef<typeof TabsPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
+    containerClassName?: string;
+  }
+>(({ className, containerClassName, ...props }, ref) => (
+  <TabsPrimitive.Root
+    ref={ref}
+    className={cn(
+      className
+    )}
+    {...props}
+  />
+))
+Tabs.displayName = "Tabs"
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
@@ -14,7 +28,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+      "w-full flex px-2 bg-gray-50 rounded-none border-b border-gray-200 h-12 justify-between items-center gap-2",
       className
     )}
     {...props}
@@ -24,18 +38,31 @@ TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
-      className
-    )}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
+    color?: "blue" | "amber" | "green" | "red" | "purple";
+  }
+>(({ className, color = "blue", ...props }, ref) => {
+  const colorStyles = {
+    blue: "data-[state=active]:border-blue-500",
+    amber: "data-[state=active]:border-amber-500",
+    green: "data-[state=active]:border-green-500",
+    red: "data-[state=active]:border-red-500",
+    purple: "data-[state=active]:border-purple-500",
+  }
+
+  return (
+    <TabsPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex-1 rounded-none h-full data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:shadow-none transition-all",
+        colorStyles[color],
+        className
+      )}
+      {...props}
+    />
+  )
+})
+TabsTrigger.displayName = "TabsTrigger"
 
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
@@ -44,7 +71,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-0 pt-2",
       className
     )}
     {...props}

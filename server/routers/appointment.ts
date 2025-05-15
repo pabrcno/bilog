@@ -70,16 +70,25 @@ export const appointmentRouter = router({
   // Get patient appointments
   getPatientAppointments: patientProcedure.query(async ({ ctx }) => {
     try {
-      // Only fetch appointments that have a valid timeSlot and dentist using SQL join conditions
       const patientAppointments = await db.query.appointments.findMany({
         where: eq(appointments.patientId, ctx.user.id),
         with: {
           timeSlot: {
             with: {
-              dentist: true,
+              dentist: {
+                columns: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
-          patient: true,
+          patient: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
         },
         orderBy: (appointments, { desc }) => [desc(appointments.createdAt)],
       })
@@ -102,9 +111,8 @@ export const appointmentRouter = router({
       const today = new Date()
       today.setHours(0, 0, 0, 0)
 
-      // First, get all appointments with status "confirmed"
+      // Get all appointments with status "confirmed" or "pending"
       const dentistAppointments = await db.query.appointments.findMany({
-        where: eq(appointments.status, "confirmed"),
         with: {
           timeSlot: {
             with: {
@@ -116,7 +124,7 @@ export const appointmentRouter = router({
         orderBy: (appointments, { asc }) => [asc(appointments.createdAt)],
       })
 
-      // Filter to only those where the timeSlot belongs to this dentist and is in the future
+      // Return all appointments (both pending and confirmed)
       return dentistAppointments
     } catch (error) {
       console.error("Error getting dentist appointments:", error)
@@ -153,6 +161,48 @@ export const appointmentRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to confirm appointment",
+          cause: error,
+        })
+      }
+    }),
+
+  // Reject an appointment
+  rejectAppointment: adminProcedure
+    .input(z.object({ appointmentId: z.number(), timeSlotId: z.number() }))
+    .mutation(async ({ input }) => {
+      try {
+        // Use a transaction to ensure both updates succeed or fail together
+        await db.transaction(async (tx) => {
+          // Check if appointment exists and is pending
+          const appointment = await tx.query.appointments.findFirst({
+            where: eq(appointments.id, input.appointmentId),
+          })
+          
+          if (!appointment) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Appointment not found" })
+          }
+          
+          if (appointment.status !== "pending") {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "Only pending appointments can be rejected" })
+          }
+          
+          // Update appointment status to rejected and make the time slot available again
+          await Promise.all([
+            tx.update(appointments)
+              .set({ status: "rejected" })
+              .where(eq(appointments.id, input.appointmentId)),
+            tx.update(timeSlots)
+              .set({ isAvailable: true })
+              .where(eq(timeSlots.id, input.timeSlotId))
+          ])
+        })
+        
+        return { success: true }
+      } catch (error) {
+        console.error("Error rejecting appointment:", error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to reject appointment",
           cause: error,
         })
       }

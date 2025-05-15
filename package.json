@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "clean": "rm -rf .next node_modules pnpm-lock.yaml"
+    "clean": "rm -rf .next node_modules pnpm-lock.yaml",
+    "db:generate": "npx drizzle-kit generate",
+    "db:push": "npx drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -28,6 +30,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.36.0",
     "drizzle-zod": "^0.7.1",
     "lucide-react": "^0.510.0",

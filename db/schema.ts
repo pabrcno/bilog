@@ -6,12 +6,13 @@ import { z } from "zod"
 // Database Schemas
 
 
+export const userRoles = pgEnum("user_roles", ["admin", "patient"])
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
-  role: varchar("role", { length: 50 }).notNull().default("patient"),
+  role: userRoles("role").notNull().default("patient"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 })
@@ -29,7 +30,7 @@ export const timeSlots = pgTable("time_slots", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 })
 
-export const appointmentStatus = pgEnum("appointment_status", ["pending", "confirmed", "cancelled"])
+export const appointmentStatus = pgEnum("appointment_status", ["pending", "confirmed", "cancelled", "rejected"])
 
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
@@ -60,7 +61,7 @@ export const timeSlotsRelations = relations(timeSlots, ({ one, many }) => ({
   appointments: many(appointments),
 }))
 
-export const appointmentsRelations = relations(appointments, ({ one }) => ({
+export const appointmentsRelations = relations(appointments, ({ one, many }) => ({
   timeSlot: one(timeSlots, {
     fields: [appointments.timeSlotId],
     references: [timeSlots.id],
