@@ -1,7 +1,5 @@
 import { appointmentRouter } from '@/server/routers/appointment';
-import { db } from '@/db';
-import { TRPCError } from '@trpc/server';
-import { appointments, timeSlots } from '@/db/schema';
+
 import { mockDb, resetMocks, createPatientContext, createAdminContext, createAppointmentStatus } from '@/test/utils';
 
 describe('Appointment Router', () => {

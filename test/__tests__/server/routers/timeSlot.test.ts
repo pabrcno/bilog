@@ -1,6 +1,5 @@
 import { timeSlotRouter } from '@/server/routers/timeSlot';
-import { db } from '@/db';
-import { TRPCError } from '@trpc/server';
+
 import { timeSlots } from '@/db/schema';
 import { mockDb, resetMocks, createAdminContext, createPublicContext } from '@/test/utils';
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -17,81 +17,49 @@ import { Section } from "@/components/ui/section"
 import { AppointmentList } from "@/components/ui/appointment-list"
 import { TimeSlotList } from "@/components/ui/time-slot-list"
 import { BookingConfirmationForm } from "@/components/ui/booking-confirmation-form"
-import { showSuccess, showError } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
-import { TimeSlot, User } from "@/db/schema"
 import { StatusIndicator } from "@/components/ui/status-indicator"
 import { DateHeader } from "@/components/ui/date-header"
+import { useUser, useAppointments, useTimeSlots, useBooking, useDateFormat } from "@/hooks"
+import { TimeSlot, User } from "@/db/schema"
 
 export default function PatientDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
-  const [isBookingOpen, setIsBookingOpen] = useState(false)
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: User } | null>(null)
-  const [cancelConfirmation, setCancelConfirmation] = useState<{ appointmentId: number; timeSlotId: number } | null>(null)
-  const [userName, setUserName] = useState("John Smith")
   const [activeTab, setActiveTab] = useState("book")
 
-  // tRPC queries and mutations
-  const { data: currentUser } = trpc.auth.getCurrentUser.useQuery()
-  const { data: appointments, isLoading: isLoadingAppointments } = trpc.appointment.getPatientAppointments.useQuery()
-  const { data: timeSlots, isLoading: isLoadingTimeSlots } = trpc.timeSlot.getTimeSlotsForDate.useQuery({
-    date: date || new Date(),
-  })
+  // Custom hooks
+  const { userName } = useUser()
+  const { formatDate } = useDateFormat()
+  
+  const { 
+    confirmAction, 
+    pendingAppointments, 
+    confirmedAppointments, 
+    rejectedAppointments,
+    isLoadingAppointments,
+    handleRequestCancelAppointment,
+    setConfirmAction,
+    executeAppointmentAction,
+    cancelPending
+  } = useAppointments({ isAdmin: false, date })
 
-  const cancelAppointmentMutation = trpc.appointment.cancelAppointment.useMutation({
-    onSuccess: () => {
-      showSuccess("Appointment cancelled successfully")
-      setCancelConfirmation(null)
-      // Refetch appointments
-      utils.appointment.getPatientAppointments.invalidate()
-    },
-    onError: (error) => {
-      showError(error.message || "Failed to cancel appointment")
-    },
-  })
+  const {
+    timeSlots,
+    isLoadingTimeSlots,
+    handleSelectTimeSlot
+  } = useTimeSlots({ date })
+  
+  const {
+    isBookingOpen,
+    setIsBookingOpen,
+    selectedSlot,
+    handleBookingSuccess,
+    openBookingDialog
+  } = useBooking()
 
-  const utils = trpc.useUtils()
-
-  // Update user name when current user data is available
-  useEffect(() => {
-    if (currentUser) {
-      setUserName(currentUser.name)
-    }
-  }, [currentUser])
-
-  // Format date for display
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })
+  // Type-safe wrapper for booking dialog
+  const handleSelectSlot = (slot: any) => {
+    openBookingDialog(slot)
   }
-
-  // Handle booking success
-  const handleBookingSuccess = () => {
-    showSuccess("Appointment booked successfully")
-    setIsBookingOpen(false)
-    // Refetch appointments and time slots
-    utils.appointment.getPatientAppointments.invalidate()
-    utils.timeSlot.getTimeSlotsForDate.invalidate({ date: date || new Date() })
-  }
-
-  // Handle time slot selection
-  const handleSelectTimeSlot = (slot: any) => {
-    setSelectedSlot(slot)
-    setIsBookingOpen(true)
-  }
-
-  const handleCancelAppointment = (appointmentId: number, timeSlotId: number) => {
-    
-    cancelAppointmentMutation.mutate({ appointmentId, timeSlotId })
-  }
-
-  // Organize appointments by status
-  const getAppointmentsByStatus = (status: string) => {
-    return appointments?.filter(appointment => appointment.status === status) || []
-  }
-
-  const pendingAppointments = getAppointmentsByStatus("pending")
-  const confirmedAppointments = getAppointmentsByStatus("confirmed")
-  const rejectedAppointments = getAppointmentsByStatus("rejected")
 
   return (
     <PageLayout userName={userName} userRole="patient">
@@ -113,7 +81,6 @@ export default function PatientDashboard() {
             <DateHeader 
               date={date} 
               formatDate={formatDate} 
-       
             />
 
             <Tabs 
@@ -146,7 +113,7 @@ export default function PatientDashboard() {
                     <TimeSlotList
                       timeSlots={timeSlots || []}
                       isLoading={isLoadingTimeSlots}
-                      onSelect={handleSelectTimeSlot}
+                      onSelect={handleSelectSlot}
                       emptyTitle="No available time slots"
                       emptyDescription="Please select another day to see available appointments."
                     />
@@ -162,7 +129,7 @@ export default function PatientDashboard() {
                     <AppointmentList
                       appointments={pendingAppointments}
                       isLoading={isLoadingAppointments}
-                      onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
+                      onCancel={handleRequestCancelAppointment}
                       emptyTitle="No pending appointments"
                       emptyDescription="You don't have any pending appointments."
                     />
@@ -178,7 +145,7 @@ export default function PatientDashboard() {
                     <AppointmentList
                       appointments={confirmedAppointments}
                       isLoading={isLoadingAppointments}
-                      onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
+                      onCancel={handleRequestCancelAppointment}
                       emptyTitle="No confirmed appointments"
                       emptyDescription="You don't have any confirmed appointments."
                     />
@@ -224,7 +191,7 @@ export default function PatientDashboard() {
       </Dialog>
 
       {/* Cancel Confirmation Dialog */}
-      <Dialog open={cancelConfirmation !== null} onOpenChange={() => setCancelConfirmation(null)}>
+      <Dialog open={confirmAction !== null} onOpenChange={() => setConfirmAction(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Cancel Appointment</DialogTitle>
@@ -234,16 +201,16 @@ export default function PatientDashboard() {
           </DialogHeader>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCancelConfirmation(null)}>
+            <Button variant="outline" onClick={() => setConfirmAction(null)}>
               Keep Appointment
             </Button>
             <Button
               variant="destructive"
-              onClick={() => cancelConfirmation !== null && handleCancelAppointment(cancelConfirmation.appointmentId, cancelConfirmation.timeSlotId)}
-              disabled={cancelAppointmentMutation.isPending}
+              onClick={executeAppointmentAction}
+              disabled={cancelPending}
               className="ml-2 sm:ml-0"
             >
-              {cancelAppointmentMutation.isPending ? "Cancelling..." : "Cancel Appointment"}
+              {cancelPending ? "Cancelling..." : "Cancel Appointment"}
             </Button>
           </DialogFooter>
         </DialogContent>

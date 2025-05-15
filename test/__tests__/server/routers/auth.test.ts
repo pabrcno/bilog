@@ -1,5 +1,5 @@
 import { authRouter } from '@/server/routers/auth';
-import { db } from '@/db';
+
 import { TRPCError } from '@trpc/server';
 import { mockDb, resetMocks, createUserRole } from '@/test/utils';
 import { cookies } from 'next/headers';
