@@ -19,12 +19,13 @@ import { TimeSlotList } from "@/components/time-slot-list"
 import { BookingConfirmationForm } from "@/components/booking-confirmation-form"
 import { showSuccess, showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
+import { TimeSlot, User } from "@/db/schema"
 
 export default function PatientDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [isBookingOpen, setIsBookingOpen] = useState(false)
-  const [selectedSlot, setSelectedSlot] = useState<any>(null)
-  const [cancelConfirmation, setCancelConfirmation] = useState<number | null>(null)
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: User } | null>(null)
+  const [cancelConfirmation, setCancelConfirmation] = useState<{ appointmentId: number; timeSlotId: number } | null>(null)
   const [userName, setUserName] = useState("John Smith")
 
   // tRPC queries and mutations
@@ -75,8 +76,9 @@ export default function PatientDashboard() {
     setIsBookingOpen(true)
   }
 
-  const handleCancelAppointment = (appointmentId: number) => {
-    cancelAppointmentMutation.mutate({ appointmentId })
+  const handleCancelAppointment = (appointmentId: number, timeSlotId: number) => {
+    console.log("Cancelling appointment", appointmentId)
+    cancelAppointmentMutation.mutate({ appointmentId, timeSlotId })
   }
 
   return (
@@ -121,9 +123,9 @@ export default function PatientDashboard() {
               <TabsContent value="my-appointments">
                 <Section title="My Appointments" description="View and manage your upcoming dental appointments">
                   <AppointmentList
-                    appointments={appointments || []}
+                    appointments={appointments ?? []}
                     isLoading={isLoadingAppointments}
-                    onCancel={(id) => setCancelConfirmation(id)}
+                    onCancel={(appointmentId, timeSlotId) => setCancelConfirmation({ appointmentId, timeSlotId })}
                     emptyTitle="No appointments"
                     emptyDescription="You don't have any upcoming appointments."
                   />
@@ -168,7 +170,7 @@ export default function PatientDashboard() {
             </Button>
             <Button
               variant="destructive"
-              onClick={() => cancelConfirmation !== null && handleCancelAppointment(cancelConfirmation)}
+              onClick={() => cancelConfirmation !== null && handleCancelAppointment(cancelConfirmation.appointmentId, cancelConfirmation.timeSlotId)}
               disabled={cancelAppointmentMutation.isPending}
             >
               {cancelAppointmentMutation.isPending ? "Cancelling..." : "Cancel Appointment"}

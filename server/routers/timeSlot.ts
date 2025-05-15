@@ -74,16 +74,7 @@ export const timeSlotRouter = router({
         orderBy: (timeSlots, { asc }) => [asc(timeSlots.startTime)],
       })
 
-      return slots.map((slot) => ({
-        id: slot.id,
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        duration: slot.duration,
-        dentistName: slot.dentist.name,
-        dentistId: slot.dentistId,
-        // Add specialty based on dentist ID (in a real app, this would come from the database)
-        dentistSpecialty: DENTIST_SPECIALTIES[slot.dentistId] || "General Dentist",
-      }))
+      return slots
     } catch (error) {
       console.error("Error getting time slots:", error)
       throw new TRPCError({

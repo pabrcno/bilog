@@ -7,17 +7,20 @@ import { User, CalendarIcon, Clock } from "lucide-react"
 
 interface AppointmentCardProps {
   id: number
+  timeSlotId: number
   patientName?: string
   date: Date
   duration: number
   status: string
   dentist?: string
-  onCancel?: (id: number) => void
+  onCancel?: (appointmentId: number, timeSlotId: number) => void
   isAdmin?: boolean
+  onConfirm?: (appointmentId: number) => void
 }
 
 export function AppointmentCard({
   id,
+  timeSlotId,
   patientName,
   date,
   duration,
@@ -25,6 +28,7 @@ export function AppointmentCard({
   dentist,
   onCancel,
   isAdmin = false,
+  onConfirm,
 }: AppointmentCardProps) {
   // Format time for display
   const formatTime = (date: Date) => {
@@ -55,7 +59,8 @@ export function AppointmentCard({
       case "cancelled":
         return "destructive"
       case "completed":
-        return "success"
+        // "success" is not a valid variant, use "secondary" for completed
+        return "secondary"
       default:
         return "outline"
     }
@@ -86,8 +91,13 @@ export function AppointmentCard({
               {status}
             </Badge>
             {onCancel && status.toLowerCase() === "confirmed" && (
-              <Button variant="destructive" size="sm" onClick={() => onCancel(id)}>
+              <Button variant="destructive" size="sm" onClick={() => onCancel(id, timeSlotId)}>
                 Cancel
+              </Button>
+            )}
+            {isAdmin && onConfirm && status.toLowerCase() === "pending" && (
+              <Button variant="default" size="sm" onClick={() => onConfirm(id)}>
+                Confirm
               </Button>
             )}
           </div>

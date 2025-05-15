@@ -17,8 +17,9 @@ export type Context = {
 
 // Create context for each request
 export const createContext = async (): Promise<Context> => {
-  const userId = cookies().get("userId")?.value
-  const userRole = cookies().get("userRole")?.value
+  const cookieStore = await cookies()
+  const userId = cookieStore.get("userId")?.value
+  const userRole = cookieStore.get("userRole")?.value
 
   if (!userId || !userRole) {
     return { user: null }

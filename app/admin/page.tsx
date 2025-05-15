@@ -49,6 +49,16 @@ export default function AdminPage() {
     },
   })
 
+  const confirmAppointmentMutation = trpc.appointment.confirmAppointment.useMutation({
+    onSuccess: () => {
+      showSuccess("Appointment confirmed successfully")
+      utils.appointment.getDentistAppointments.invalidate()
+    },
+    onError: (error) => {
+      showError(error.message || "Failed to confirm appointment")
+    },
+  })
+
   const utils = trpc.useUtils()
 
   // Update user name when current user data is available
@@ -63,9 +73,9 @@ export default function AdminPage() {
     appointments?.filter(
       (appointment) =>
         date &&
-        new Date(appointment.startTime).getDate() === date.getDate() &&
-        new Date(appointment.startTime).getMonth() === date.getMonth() &&
-        new Date(appointment.startTime).getFullYear() === date.getFullYear(),
+        new Date(appointment.timeSlot.startTime).getDate() === date.getDate() &&
+        new Date(appointment.timeSlot.startTime).getMonth() === date.getMonth() &&
+        new Date(appointment.timeSlot.startTime).getFullYear() === date.getFullYear(),
     ) || []
 
   // Handle time slot form success
@@ -82,8 +92,13 @@ export default function AdminPage() {
   }
 
   // Handle appointment cancellation
-  const handleCancelAppointment = async (id: number) => {
-    cancelAppointmentMutation.mutate({ appointmentId: id })
+  const handleCancelAppointment = async (appointmentId: number, timeSlotId: number) => {
+    cancelAppointmentMutation.mutate({ appointmentId, timeSlotId })
+  }
+
+  // Handle appointment confirmation
+  const handleConfirmAppointment = async (appointmentId: number) => {
+    confirmAppointmentMutation.mutate({ appointmentId })
   }
 
   // Format date for display
@@ -144,6 +159,7 @@ export default function AdminPage() {
                   isLoading={isLoadingAppointments}
                   isAdmin={true}
                   onCancel={handleCancelAppointment}
+                  onConfirm={handleConfirmAppointment}
                   emptyTitle="No appointments for this day"
                   emptyDescription="Select another day or add available time slots."
                 />

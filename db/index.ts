@@ -1,12 +1,11 @@
-import { neon, neonConfig } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
+import { neonConfig } from "@neondatabase/serverless"
+import { drizzle } from "drizzle-orm/neon-serverless"
+import ws from "ws"
 import * as schema from "@/db/schema"
 
-// Configure neon
+// Configure neon for Node.js WebSocket
+neonConfig.webSocketConstructor = ws
 neonConfig.fetchConnectionCache = true
 
-// Create a SQL client with Neon
-const sql = neon<boolean, boolean>(process.env.DATABASE_URL!)
-
-// Create a Drizzle client with our schema
-export const db = drizzle(sql, { schema })
+// Create a Drizzle client with our schema and WebSocket connection
+export const db = drizzle(process.env.DATABASE_URL!, { schema })

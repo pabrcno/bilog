@@ -8,6 +8,7 @@ import { DialogFooter } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
+import { TimeSlot, User } from "@/db/schema"
 
 // Define the form schema with Zod
 const bookingSchema = z.object({
@@ -18,12 +19,8 @@ const bookingSchema = z.object({
 type BookingFormValues = z.infer<typeof bookingSchema>
 
 interface BookingConfirmationFormProps {
-  timeSlot: {
-    id: number
-    startTime: string | Date
-    duration: number
-    dentistName: string
-    dentistSpecialty?: string
+  timeSlot: TimeSlot & {
+    dentist: User
   }
   onSuccess: () => void
   onCancel: () => void
@@ -83,11 +80,11 @@ export function BookingConfirmationForm({ timeSlot, onSuccess, onCancel }: Booki
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200">
               <Avatar>
-                <AvatarFallback>{getInitials(timeSlot.dentistName)}</AvatarFallback>
+                <AvatarFallback>{getInitials(timeSlot.dentist.name)}</AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-medium">{timeSlot.dentistName}</h3>
-                <p className="text-sm text-gray-500">{timeSlot.dentistSpecialty || "General Dentist"}</p>
+                <h3 className="font-medium">{timeSlot.dentist.name}</h3>
+                <p className="text-sm text-gray-500">{"General Dentist"}</p>
               </div>
             </div>
             <div className="space-y-3">

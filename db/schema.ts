@@ -1,9 +1,10 @@
-import { pgTable, serial, varchar, timestamp, boolean, integer, text } from "drizzle-orm/pg-core"
+import { pgTable, serial, varchar, timestamp, boolean, integer, text, pgEnum } from "drizzle-orm/pg-core"
 import { relations, InferModel } from "drizzle-orm"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
 
 // Database Schemas
+
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -28,6 +29,8 @@ export const timeSlots = pgTable("time_slots", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 })
 
+export const appointmentStatus = pgEnum("appointment_status", ["pending", "confirmed", "cancelled"])
+
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
   timeSlotId: integer("time_slot_id")
@@ -36,7 +39,7 @@ export const appointments = pgTable("appointments", {
   patientId: integer("patient_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  status: varchar("status", { length: 50 }).notNull().default("confirmed"),
+  status: appointmentStatus("status").notNull().default("pending"),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
