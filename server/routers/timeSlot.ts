@@ -32,6 +32,24 @@ export const timeSlotRouter = router({
         const endTime = new Date(startTime)
         endTime.setMinutes(endTime.getMinutes() + input.duration)
 
+        // Check for collision: another slot for this dentist that overlaps
+        const overlappingSlot = await db.query.timeSlots.findFirst({
+          where: and(
+            // Same dentist
+            eq(timeSlots.dentistId, ctx.user.id),
+            // Overlap condition: (startA < endB) && (endA > startB)
+            gte(timeSlots.endTime, startTime),
+            lte(timeSlots.startTime, endTime)
+          ),
+        })
+
+        if (overlappingSlot) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "A time slot already exists that overlaps with the selected time.",
+          })
+        }
+
         await db.insert(timeSlots).values({
           dentistId: ctx.user.id,
           startTime,
@@ -40,7 +58,6 @@ export const timeSlotRouter = router({
           isAvailable: true,
         })
 
-  
         return { success: true }
       } catch (error) {
         console.error("Error creating time slot:", error)

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CalendarSidebar } from "@/components/ui/calendar-sidebar"
 import { showError } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
 import { DialogFooter } from "@/components/ui/dialog"
 
 // Define the form schema with Zod
@@ -27,13 +26,14 @@ const timeSlotSchema = z.object({
 type TimeSlotFormValues = z.infer<typeof timeSlotSchema>
 
 interface AddTimeSlotFormProps {
-  onSuccess: () => void
+  onSubmit: (data: { startTime: string, duration: number }) => void
   onCancel: () => void
+  isPending: boolean
 }
 
-export function AddTimeSlotForm({ onSuccess, onCancel }: AddTimeSlotFormProps) {
+export function AddTimeSlotForm({ onSubmit, onCancel, isPending }: AddTimeSlotFormProps) {
   // Initialize React Hook Form
-  const { handleSubmit, register, setValue, watch, formState: { errors } } = useForm<TimeSlotFormValues>({
+  const { handleSubmit, setValue, watch, formState: { errors } } = useForm<TimeSlotFormValues>({
     resolver: zodResolver(timeSlotSchema),
     defaultValues: {
       date: new Date(),
@@ -42,23 +42,14 @@ export function AddTimeSlotForm({ onSuccess, onCancel }: AddTimeSlotFormProps) {
     },
   })
 
-  const createTimeSlotMutation = trpc.timeSlot.createTimeSlot.useMutation({
-    onSuccess: () => {
-      onSuccess()
-    },
-    onError: (error) => {
-      showError(error.message || "Failed to add time slot")
-    },
-  })
-
-  const onSubmit = (values: TimeSlotFormValues) => {
+  const handleFormSubmit = (values: TimeSlotFormValues) => {
     try {
       // Create a date object with the selected date and time
       const [hours, minutes] = values.time.split(":").map(Number)
       const startTime = new Date(values.date)
       startTime.setHours(hours, minutes, 0, 0)
 
-      createTimeSlotMutation.mutate({
+      onSubmit({
         startTime: startTime.toISOString(),
         duration: Number(values.duration),
       })
@@ -69,7 +60,7 @@ export function AddTimeSlotForm({ onSuccess, onCancel }: AddTimeSlotFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="grid gap-4 py-4">
         <div>
           <label className="block text-sm font-medium mb-1">Date</label>
@@ -121,8 +112,8 @@ export function AddTimeSlotForm({ onSuccess, onCancel }: AddTimeSlotFormProps) {
         <Button variant="outline" type="button" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={createTimeSlotMutation.isPending}>
-          {createTimeSlotMutation.isPending ? "Adding..." : "Add Time Slot"}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Adding..." : "Add Time Slot"}
         </Button>
       </DialogFooter>
     </form>

@@ -43,6 +43,18 @@ export default function AdminPage() {
     date: date || new Date(),
   })
 
+  const createTimeSlotMutation = trpc.timeSlot.createTimeSlot.useMutation({
+    onSuccess: () => {
+      setIsAddSlotOpen(false)
+      showSuccess("Time slot added successfully")
+      // Refetch time slots
+      utils.timeSlot.getTimeSlotsForDate.invalidate({ date: date || new Date() })
+    },
+    onError: (error) => {
+      showError(error.message || "Failed to add time slot")
+    },
+  })
+
   const deleteTimeSlotMutation = trpc.timeSlot.deleteTimeSlot.useMutation({
     onSuccess: () => {
       showSuccess("Time slot deleted successfully")
@@ -124,13 +136,12 @@ export default function AdminPage() {
   const pendingAppointments = filterAppointmentsByDateAndStatus("pending")
   const confirmedAppointments = filterAppointmentsByDateAndStatus("confirmed")
 
-
-  // Handle time slot form success
-  const handleTimeSlotSuccess = () => {
-    setIsAddSlotOpen(false)
-    showSuccess("Time slot added successfully")
-    // Refetch time slots
-    utils.timeSlot.getTimeSlotsForDate.invalidate({ date: date || new Date() })
+  // Handle time slot form submit
+  const handleCreateTimeSlot = ({ startTime, duration }: { startTime: string, duration: number }) => {
+    createTimeSlotMutation.mutate({
+      startTime,
+      duration
+    })
   }
 
   // Delete a time slot
@@ -388,7 +399,11 @@ export default function AdminPage() {
             <DialogDescription>Create a new time slot for patient appointments.</DialogDescription>
           </DialogHeader>
 
-          <AddTimeSlotForm onSuccess={handleTimeSlotSuccess} onCancel={() => setIsAddSlotOpen(false)} />
+          <AddTimeSlotForm 
+            onSubmit={handleCreateTimeSlot} 
+            onCancel={() => setIsAddSlotOpen(false)} 
+            isPending={createTimeSlotMutation.isPending}
+          />
         </DialogContent>
       </Dialog>
 
