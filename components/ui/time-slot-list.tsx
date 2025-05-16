@@ -9,7 +9,7 @@ interface TimeSlotListProps {
   timeSlots:( TimeSlot & { dentist: { name: string } })[]
   isLoading: boolean
   isAdmin?: boolean
-  onSelect?: (slot: TimeSlot) => void
+  onSelect?: (slot: TimeSlot & { dentist: { name: string } }) => void
   onDelete?: (id: number) => void
   emptyTitle?: string
   emptyDescription?: string
@@ -37,7 +37,7 @@ export function TimeSlotList({
       {timeSlots.map((slot) => (
         <TimeSlotCard
           key={slot.id}
-          id={slot.id}
+        
           date={new Date(slot.startTime)}
           duration={slot.duration}
           dentistName={slot.dentist.name}

@@ -1,6 +1,4 @@
 import React from 'react'
-import { Button } from "@/components/ui/button"
-import { CalendarDays } from "lucide-react"
 
 interface DateHeaderProps {
   date: Date | undefined

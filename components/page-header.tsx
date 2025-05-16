@@ -9,10 +9,9 @@ import { trpc } from "@/utils/trpc"
 
 interface PageHeaderProps {
   userName: string
-  userRole: "admin" | "patient"
 }
 
-export function PageHeader({ userName, userRole }: PageHeaderProps) {
+export function PageHeader({ userName }: PageHeaderProps) {
   const router = useRouter()
 
   const logoutMutation = trpc.auth.logout.useMutation({

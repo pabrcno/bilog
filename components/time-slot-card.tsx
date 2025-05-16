@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Clock } from "lucide-react"
 
 interface TimeSlotCardProps {
-  id: number
   date: Date
   duration: number
   dentistName: string
@@ -17,7 +16,6 @@ interface TimeSlotCardProps {
 }
 
 export function TimeSlotCard({
-  id,
   date,
   duration,
   dentistName,

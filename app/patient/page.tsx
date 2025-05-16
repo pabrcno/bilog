@@ -45,7 +45,6 @@ export default function PatientDashboard() {
   const {
     timeSlots,
     isLoadingTimeSlots,
-    handleSelectTimeSlot
   } = useTimeSlots({ date })
   
   const {
@@ -57,8 +56,8 @@ export default function PatientDashboard() {
   } = useBooking()
 
   // Type-safe wrapper for booking dialog
-  const handleSelectSlot = (slot: any) => {
-    openBookingDialog(slot)
+  const handleSelectSlot = (slot: import("@/db/schema").TimeSlot & { dentist: { name: string } }) => {
+    openBookingDialog(slot as unknown as import("@/db/schema").TimeSlot & { dentist: import("@/db/schema").User })
   }
 
   return (

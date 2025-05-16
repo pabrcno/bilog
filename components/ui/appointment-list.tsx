@@ -1,6 +1,6 @@
 import { AppointmentCard } from "@/components/appointment-card"
 import { EmptyState } from "@/components/empty-state"
-import { Appointment, TimeSlot, User } from "@/db/schema"
+import { Appointment, TimeSlot } from "@/db/schema"
 
 interface AppointmentListProps {
   appointments: (Appointment & {

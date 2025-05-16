@@ -1,7 +1,6 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DialogFooter } from "@/components/ui/dialog"
@@ -9,14 +8,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
 import { TimeSlot, User } from "@/db/schema"
-
-// Define the form schema with Zod
-const bookingSchema = z.object({
-  timeSlotId: z.number(),
-})
-
-// Infer the type from the schema
-type BookingFormValues = z.infer<typeof bookingSchema>
 
 interface BookingConfirmationFormProps {
   timeSlot: TimeSlot & {
@@ -26,9 +17,14 @@ interface BookingConfirmationFormProps {
   onCancel: () => void
 }
 
+// Define BookingFormValues inline
+interface BookingFormValues {
+  timeSlotId: number
+}
+
 export function BookingConfirmationForm({ timeSlot, onSuccess, onCancel }: BookingConfirmationFormProps) {
   // Initialize React Hook Form
-  const { handleSubmit, register, formState: { errors } } = useForm<BookingFormValues>({
+  const { handleSubmit, register } = useForm<BookingFormValues>({
     defaultValues: {
       timeSlotId: timeSlot.id,
     },

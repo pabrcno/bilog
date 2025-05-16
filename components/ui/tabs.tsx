@@ -7,10 +7,8 @@ import { cn } from "@/lib/utils"
 
 const Tabs = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
-    containerClassName?: string;
-  }
->(({ className, containerClassName, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+>(({ className, ...props }, ref) => (
   <TabsPrimitive.Root
     ref={ref}
     className={cn(
