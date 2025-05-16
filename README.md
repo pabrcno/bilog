@@ -15,11 +15,11 @@ https://deepwiki.com/pabrcno/bilog
 - [Scalability & Extensibility](#scalability--extensibility)
 - [How to Run & Test](#how-to-run--test)
 - [Design Decisions](#design-decisions)
+- [Centralized Typing & Data Validation](#centralized-typing--data-validation)
+- [UI Library](#ui-library)
 - [Recommended Next Steps for Production](#recommended-next-steps-for-production)
 - [Implemented Next Step: Deployment to Vercel](#implemented-next-step-deployment-to-vercel)
 - [License](#license)
-- [Centralized Typing & Data Validation](#centralized-typing--data-validation)
-- [UI Library](#ui-library)
 
 
 ---
