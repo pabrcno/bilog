@@ -124,7 +124,6 @@ Link: https://v0-simple-appointment-scheduler.vercel.app/
   - Consistency and maintainability (no duplicated or out-of-sync types)
   - Zod schemas are generated directly from the Drizzle schema, so validation and types are always in sync.
 
----
 
 ### UI Library
 
