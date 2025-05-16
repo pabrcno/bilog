@@ -6,7 +6,14 @@ import { TimeSlot, User } from "@/db/schema"
 export function useBooking() {
   const [isBookingOpen, setIsBookingOpen] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: { name: string } } | null>(null)
-  
+  const bookAppointmentMutation = trpc.appointment.bookAppointment.useMutation({
+    onSuccess: () => {
+      handleBookingSuccess()
+    },
+    onError: (error) => {
+      showError(error.message || "Failed to book appointment")
+    },
+  })
   const utils = trpc.useUtils()
 
   // Handle booking success
@@ -26,12 +33,19 @@ export function useBooking() {
     setIsBookingOpen(true)
   }
 
+  const handleBooking = ({timeSlotId}: {timeSlotId: number}) => {
+    bookAppointmentMutation.mutate({ timeSlotId })
+  }
+
+
+
   return {
     isBookingOpen,
     setIsBookingOpen,
     selectedSlot,
     setSelectedSlot,
     handleBookingSuccess,
-    openBookingDialog
+    openBookingDialog,
+    handleBooking
   }
 } 

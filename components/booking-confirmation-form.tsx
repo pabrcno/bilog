@@ -1,36 +1,26 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { DialogFooter } from "@/components/ui/dialog"
-import { showError } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
+
 import { TimeSlot } from "@/db/schema"
 
 interface BookingConfirmationFormProps {
   timeSlot: TimeSlot & { dentist: { name: string } }
-  onSuccess: () => void
+  onSubmit: (values: { timeSlotId: number }) => void
   onCancel: () => void
 }
 
 export function BookingConfirmationForm({
   timeSlot,
-  onSuccess,
+  onSubmit,
   onCancel,
 }: BookingConfirmationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const bookAppointmentMutation = trpc.appointment.bookAppointment.useMutation({
-    onSuccess: () => {
-      setIsSubmitting(false)
-      onSuccess()
-    },
-    onError: (error) => {
-      setIsSubmitting(false)
-      showError(error.message || "Failed to book appointment")
-    },
-  })
+ 
 
   const handleConfirm = () => {
     setIsSubmitting(true)
-    bookAppointmentMutation.mutate({
+    onSubmit({
       timeSlotId: timeSlot.id,
     })
   }

@@ -14,9 +14,9 @@ import {
 import { PageLayout } from "@/components/ui/page-layout"
 import { CalendarSidebar } from "@/components/ui/calendar-sidebar"
 import { Section } from "@/components/ui/section"
-import { AppointmentList } from "@/components/ui/appointment-list"
-import { TimeSlotList } from "@/components/ui/time-slot-list"
-import { BookingConfirmationForm } from "@/components/ui/booking-confirmation-form"
+import { AppointmentList } from "@/components/appointment-list"
+import { TimeSlotList } from "@/components/time-slot-list"
+import { BookingConfirmationForm } from "@/components/booking-confirmation-form"
 import { StatusIndicator } from "@/components/ui/status-indicator"
 import { DateHeader } from "@/components/ui/date-header"
 import { useUser, useAppointments, useTimeSlots, useBooking, useDateFormat } from "@/hooks"
@@ -40,7 +40,8 @@ export default function PatientDashboard() {
     handleRequestCancelAppointment,
     setConfirmAction,
     executeAppointmentAction,
-    cancelPending
+    cancelPending,
+
   } = useAppointments({ isAdmin: false, date })
 
   const {
@@ -52,8 +53,9 @@ export default function PatientDashboard() {
     isBookingOpen,
     setIsBookingOpen,
     selectedSlot,
-    handleBookingSuccess,
-    openBookingDialog
+
+    openBookingDialog,
+    handleBooking
   } = useBooking()
 
   // Type-safe wrapper for booking dialog
@@ -183,7 +185,7 @@ export default function PatientDashboard() {
           {selectedSlot && (
             <BookingConfirmationForm
               timeSlot={selectedSlot}
-              onSuccess={handleBookingSuccess}
+              onSubmit={handleBooking}
               onCancel={() => setIsBookingOpen(false)}
             />
           )}
