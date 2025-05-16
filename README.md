@@ -137,17 +137,18 @@ Link: https://v0-simple-appointment-scheduler.vercel.app/
 2. **Consider Supabase for Auth, Database, Storage and Rate Limiting**: Supabase provides a unified platform for authentication, Postgres database, file storage, and real-time subscriptions. Adopting Supabase can simplify backend infrastructure, speed up development, and offer a scalable, managed solution for user auth, data, and file uploads.
 
 3. **Adopt a monorepo architecture** (e.g., Turborepo) to share components and utilities across all Bilog apps.
-4. **Create a design system library** for consistent UI/UX across projects.
-5. **Add logging and error monitoring** (e.g., Sentry) for observability.
-6. **Integrate alerting with Slack** for critical errors or operational events.
-7. **Add analytics** (e.g., PostHog, Plausible, or Vercel Analytics) for usage insights.
-8. **Add performance monitoring** (e.g., Vercel Speed Insights, Lighthouse CI).
-9. **Infrastructure**: Deploy on Vercel, AWS, or GCP with CDN, and autoscaling.
-10. **Monitoring**: Use tools like Grafana, Prometheus, or Datadog for metrics and uptime.
-11. **CI/CD**: Set up automated testing and deployment pipelines.
-12. **ESLint**: Integrate ESLint to automatically catch code issues, enforce consistent style, and prevent bugs early—helping teams write cleaner, more maintainable code and streamlining the development process.
-13. **Owner Panel**: Add general management system to handle super user activities.
-14. **UI Improvements**: Add landing, demo, tuturials, etc.
+4. **i18n**: Translations to adapt to the user's lanaguage.
+5. **Create a design system library** for consistent UI/UX across projects.
+6. **Add logging and error monitoring** (e.g., Sentry) for observability.
+7. **Integrate alerting with Slack** for critical errors or operational events.
+8. **Add analytics** (e.g., PostHog, Plausible, or Vercel Analytics) for usage insights.
+9. **Add performance monitoring** (e.g., Vercel Speed Insights, Lighthouse CI).
+10. **Infrastructure**: Deploy on Vercel, AWS, or GCP with CDN, and autoscaling.
+11. **Monitoring**: Use tools like Grafana, Prometheus, or Datadog for metrics and uptime.
+12. **CI/CD**: Set up automated testing and deployment pipelines.
+13. **ESLint**: Integrate ESLint to automatically catch code issues, enforce consistent style, and prevent bugs early—helping teams write cleaner, more maintainable code and streamlining the development process.
+14. **Owner Panel**: Add general management system to handle super user activities.
+15. **UI Improvements**: Add landing, demo, tuturials, etc.
 
 ---
 
