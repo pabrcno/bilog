@@ -117,6 +117,19 @@ Link: https://v0-simple-appointment-scheduler.vercel.app/
 - **Mock authentication** for demo purposes, with clear extension points for real auth.
 - **Unit testing** focused on backend logic and utilities.
 
+### Centralized Typing & Data Validation
+
+- **Centralized Types**: All core types (users, appointments, time slots) are defined in a single place using Drizzle ORM and `drizzle-zod`. This ensures:
+  - Type safety across the entire stack (database, backend, frontend)
+  - Consistency and maintainability (no duplicated or out-of-sync types)
+  - Zod schemas are generated directly from the Drizzle schema, so validation and types are always in sync.
+
+---
+
+### UI Library
+
+- **shadcn/ui**: The UI is built using [shadcn/ui](https://ui.shadcn.com/), a modern, accessible, and customizable component library based on Radix UI and Tailwind CSS. This provides a strong foundation for usability, accessibility, and rapid development.
+
 ---
 
 ## Recommended Next Steps for Production
@@ -152,15 +165,3 @@ Deploying to Vercel provides a seamless, scalable, and developer-friendly platfo
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
 
 
-## Centralized Typing & Data Validation
-
-- **Centralized Types**: All core types (users, appointments, time slots) are defined in a single place using Drizzle ORM and `drizzle-zod`. This ensures:
-  - Type safety across the entire stack (database, backend, frontend)
-  - Consistency and maintainability (no duplicated or out-of-sync types)
-  - Zod schemas are generated directly from the Drizzle schema, so validation and types are always in sync.
-
----
-
-## UI Library
-
-- **shadcn/ui**: The UI is built using [shadcn/ui](https://ui.shadcn.com/), a modern, accessible, and customizable component library based on Radix UI and Tailwind CSS. This provides a strong foundation for usability, accessibility, and rapid development.
