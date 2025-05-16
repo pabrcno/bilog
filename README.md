@@ -93,7 +93,6 @@ Link: https://v0-simple-appointment-scheduler.vercel.app/
 1. **Install dependencies:**
    ```bash
    pnpm install
-   # or yarn install / npm install
    ```
 2. **Run the development server:**
    ```bash
