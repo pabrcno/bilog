@@ -5,7 +5,7 @@ import { TimeSlot, User } from "@/db/schema"
 
 export function useBooking() {
   const [isBookingOpen, setIsBookingOpen] = useState(false)
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: User } | null>(null)
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot & { dentist: { name: string } } | null>(null)
   
   const utils = trpc.useUtils()
 
@@ -21,7 +21,7 @@ export function useBooking() {
   }
 
   // Open booking dialog with selected time slot
-  const openBookingDialog = (slot: TimeSlot & { dentist: User }) => {
+  const openBookingDialog = (slot: TimeSlot & { dentist: { name: string } }) => {
     setSelectedSlot(slot)
     setIsBookingOpen(true)
   }

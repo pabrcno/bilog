@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button"
 import { DialogFooter } from "@/components/ui/dialog"
 import { showError } from "@/lib/toast"
 import { trpc } from "@/utils/trpc"
-import { TimeSlot, User } from "@/db/schema"
+import { TimeSlot } from "@/db/schema"
 
 interface BookingConfirmationFormProps {
-  timeSlot: TimeSlot & { dentist: User }
+  timeSlot: TimeSlot & { dentist: { name: string } }
   onSuccess: () => void
   onCancel: () => void
 }
