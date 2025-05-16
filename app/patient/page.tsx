@@ -20,7 +20,7 @@ import { BookingConfirmationForm } from "@/components/ui/booking-confirmation-fo
 import { StatusIndicator } from "@/components/ui/status-indicator"
 import { DateHeader } from "@/components/ui/date-header"
 import { useUser, useAppointments, useTimeSlots, useBooking, useDateFormat } from "@/hooks"
-import { TimeSlot, User } from "@/db/schema"
+
 
 export default function PatientDashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())

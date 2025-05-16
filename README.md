@@ -101,6 +101,7 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 9. **Infrastructure**: Deploy on Vercel, AWS, or GCP with CDN, and autoscaling.
 10. **Monitoring**: Use tools like Grafana, Prometheus, or Datadog for metrics and uptime.
 11. **CI/CD**: Set up automated testing and deployment pipelines.
+12. **ESLint**: Integrate ESLint to automatically catch code issues, enforce consistent style, and prevent bugs early—helping teams write cleaner, more maintainable code and streamlining the development process.
 
 ---
 
