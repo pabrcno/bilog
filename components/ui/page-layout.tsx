@@ -13,7 +13,7 @@ export function PageLayout({ children, userName }: PageLayoutProps) {
       <main className="container mx-auto py-6 px-4 sm:px-6">{children}</main>
       <footer className="border-t border-gray-200 py-6 text-center text-gray-500">
         <div className="container mx-auto">
-          <p>© {new Date().getFullYear()} DentalScheduler. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Paulo Briceno. All rights reserved.</p>
         </div>
       </footer>
     </div>

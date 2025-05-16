@@ -4,6 +4,37 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 
 ---
 
+## Index
+
+- [Demo Credentials](#demo-credentials)
+- [Project Structure](#project-structure)
+- [Functionality & Implementation](#functionality--implementation)
+- [Data Modeling](#data-modeling)
+- [Scalability & Extensibility](#scalability--extensibility)
+- [How to Run & Test](#how-to-run--test)
+- [Design Decisions](#design-decisions)
+- [Recommended Next Steps for Production](#recommended-next-steps-for-production)
+- [Implemented Next Step: Deployment to Vercel](#implemented-next-step-deployment-to-vercel)
+- [License](#license)
+- [Centralized Typing & Data Validation](#centralized-typing--data-validation)
+- [UI Library](#ui-library)
+
+
+---
+
+## Demo Credentials
+
+Link: https://v0-simple-appointment-scheduler.vercel.app/
+
+- **Admin**
+  - Email: `admin@example.com`
+  - Password: `123456`
+- **Patient**
+  - Email: `patient@example.com`
+  - Password: `123456`
+
+---
+
 ## Project Structure
 
 - **app/**: Next.js app directory, including routing, layouts, and pages for both patient and admin flows.
@@ -114,31 +145,12 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 Deploying to Vercel provides a seamless, scalable, and developer-friendly platform for hosting Next.js applications. Vercel offers automatic deployments, serverless infrastructure, built-in CDN, and easy integration with GitHub for CI/CD. This ensures fast, reliable delivery and a great developer experience with minimal configuration.
 
 
-
-**Next Steps:**
-- Configure custom domains and SSL.
-- Set up environment variables for production.
-- Monitor deployments and performance using Vercel Analytics and Speed Insights.
-
-
 ---
 
 ## License
 
 This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
 
----
-
-## Demo Credentials
-
-- **Admin**
-  - Email: `admin@example.com`
-  - Password: `123456`
-- **Patient**
-  - Email: `patient@example.com`
-  - Password: `123456`
-
----
 
 ## Centralized Typing & Data Validation
 
