@@ -61,7 +61,7 @@ export default function PatientDashboard() {
   }
 
   return (
-    <PageLayout userName={userName} userRole="patient">
+    <PageLayout userName={userName} >
       <div className="container max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
           <div className="space-y-6">
