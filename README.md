@@ -102,6 +102,8 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 10. **Monitoring**: Use tools like Grafana, Prometheus, or Datadog for metrics and uptime.
 11. **CI/CD**: Set up automated testing and deployment pipelines.
 12. **ESLint**: Integrate ESLint to automatically catch code issues, enforce consistent style, and prevent bugs early—helping teams write cleaner, more maintainable code and streamlining the development process.
+13. **Owner Panel**: Add general management system to handle super user activities.
+14. **UI Improvements**: Add landing, demo, tuturials, etc.
 
 ---
 
