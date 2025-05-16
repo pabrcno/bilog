@@ -6,14 +6,6 @@ import { timeSlots } from "@/db/schema"
 import { eq, and, gte, lte } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
-// Define specialties for dentists (in a real app, this would be in the database)
-const DENTIST_SPECIALTIES: Record<number, string> = {
-  1: "General Dentist",
-  2: "Orthodontist",
-  3: "Pediatric Dentist",
-  4: "Periodontist",
-  5: "Endodontist",
-}
 
 export const timeSlotRouter = router({
   // Create a new time slot
