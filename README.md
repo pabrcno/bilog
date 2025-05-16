@@ -91,7 +91,8 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 ## Recommended Next Steps for Production
 
 1. **Add real authentication** (e.g., Supabase Auth).
-2. **Consider Supabase for Auth, Database, and Storage**: Supabase provides a unified platform for authentication, Postgres database, file storage, and real-time subscriptions. Adopting Supabase can simplify backend infrastructure, speed up development, and offer a scalable, managed solution for user auth, data, and file uploads.
+2. **Consider Supabase for Auth, Database, Storage and Rate Limiting**: Supabase provides a unified platform for authentication, Postgres database, file storage, and real-time subscriptions. Adopting Supabase can simplify backend infrastructure, speed up development, and offer a scalable, managed solution for user auth, data, and file uploads.
+
 3. **Adopt a monorepo architecture** (e.g., Turborepo) to share components and utilities across all Bilog apps.
 4. **Create a design system library** for consistent UI/UX across projects.
 5. **Add logging and error monitoring** (e.g., Sentry) for observability.
