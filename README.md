@@ -148,7 +148,7 @@ Link: https://v0-simple-appointment-scheduler.vercel.app/
 12. **CI/CD**: Set up automated testing and deployment pipelines.
 13. **ESLint**: Integrate ESLint to automatically catch code issues, enforce consistent style, and prevent bugs early—helping teams write cleaner, more maintainable code and streamlining the development process.
 14. **Owner Panel**: Add general management system to handle super user activities.
-15. **UI Improvements**: Add landing, demo, tuturials, etc.
+15. **UI Improvements**: Add landing, demo, tuturials, responsive UI, etc.
 
 ---
 
