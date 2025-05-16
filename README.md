@@ -1,36 +1,158 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Appointment Booking Application
 
-## Getting Started
+This project is a full-stack appointment booking system built with Next.js, tRPC, Drizzle ORM, and a modern React UI. It is designed to handle user registration, authentication, appointment scheduling, and management for both patients and admins. The architecture and codebase are structured for scalability, maintainability, and extensibility, following best practices for modern web development.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **app/**: Next.js app directory, including routing, layouts, and pages for both patient and admin flows.
+  - **admin/**: Admin dashboard and login pages.
+  - **patient/**: Patient dashboard, login, and registration pages.
+  - **api/**: API endpoints (tRPC integration).
+- **components/**: Reusable React components.
+  - **ui/**: UI primitives (buttons, dialogs, forms, etc.).
+  - **auth/**: Authentication forms.
+  - **admin/**: Admin-specific components.
+- **db/**: Database schema and initialization (Drizzle ORM).
+- **migrations/**: SQL migration files for schema evolution.
+- **server/**: tRPC server logic and routers.
+- **lib/**: Shared utilities (theme, toast notifications, helpers).
+- **providers/**: React context providers (e.g., tRPC provider).
+- **utils/**: Utility functions (e.g., tRPC helpers).
+- **test/**: Unit tests, setup, and test utilities.
+- **public/**: Static assets.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Functionality & Implementation
 
-## Learn More
+- **Appointments, Users, Time Slots**: The app models users (patients/admins), appointments, and time slots using a normalized relational schema (see `db/schema.ts`).
+- **Edge Cases**: Handles double-booking, invalid time slots, and user input validation using Zod schemas and backend checks.
+- **User Flows**: Separate flows for patients (booking, viewing, managing appointments) and admins (managing slots, viewing all appointments).
+- **API Design**: All backend logic is exposed via tRPC routers, ensuring type safety and clear separation of concerns.
+- **Frontend Logic**: State is managed using React hooks and context, with clear separation between UI, data fetching, and business logic.
+- **Error Handling**: Graceful error messages for failed requests, invalid inputs, and inconsistent states, both in the UI and API responses.
+- **UX & UI**: Built with Radix UI, Tailwind CSS, and custom components for a clean, accessible, and responsive interface.
+- **Testing**: Unit tests for tRPC routers and utilities, using Jest and jest-mock-extended for mocking database and context.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data Modeling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Users**: Patients and admins, with authentication and role-based access.
+- **Appointments**: Linked to users and time slots, with status tracking.
+- **Time Slots**: Managed by admins, bookable by patients, with validation to prevent conflicts.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scalability & Extensibility
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Modular code structure for easy feature addition.
+- tRPC and Drizzle ORM for type-safe, scalable backend logic.
+- UI components are reusable and can be shared across projects.
+- Designed to support future integration with real authentication, analytics, logging, and more.
+
+---
+
+## How to Run & Test
+
+1. **Install dependencies:**
+   ```bash
+   pnpm install
+   # or yarn install / npm install
+   ```
+2. **Run the development server:**
+   ```bash
+   pnpm dev
+   ```
+3. **Run tests:**
+   ```bash
+   pnpm test
+   ```
+4. **Database migrations:**
+   ```bash
+   pnpm db:push
+   ```
+
+---
+
+## Design Decisions
+
+- **tRPC** for end-to-end type safety and rapid API development.
+- **Drizzle ORM** for modern, type-safe database access and migrations.
+- **Radix UI & Tailwind CSS** for accessible, composable UI components.
+- **Separation of patient/admin flows** for clarity and maintainability.
+- **Mock authentication** for demo purposes, with clear extension points for real auth.
+- **Unit testing** focused on backend logic and utilities.
+
+---
+
+## Recommended Next Steps for Production
+
+1. **Add real authentication** (e.g., Supabase Auth).
+2. **Consider Supabase for Auth, Database, and Storage**: Supabase provides a unified platform for authentication, Postgres database, file storage, and real-time subscriptions. Adopting Supabase can simplify backend infrastructure, speed up development, and offer a scalable, managed solution for user auth, data, and file uploads.
+3. **Adopt a monorepo architecture** (e.g., Turborepo) to share components and utilities across all Bilog apps.
+4. **Create a design system library** for consistent UI/UX across projects.
+5. **Add logging and error monitoring** (e.g., Sentry) for observability.
+6. **Integrate alerting with Slack** for critical errors or operational events.
+7. **Add analytics** (e.g., PostHog, Plausible, or Vercel Analytics) for usage insights.
+8. **Add performance monitoring** (e.g., Vercel Speed Insights, Lighthouse CI).
+9. **Infrastructure**: Deploy on Vercel, AWS, or GCP with CDN, and autoscaling.
+10. **Monitoring**: Use tools like Grafana, Prometheus, or Datadog for metrics and uptime.
+11. **CI/CD**: Set up automated testing and deployment pipelines.
+
+---
+
+## Implemented Next Step: Monorepo Architecture Recommendation
+
+**Rationale:**
+Given the Bilog project's need to share UI components, utilities, and design patterns across multiple applications, adopting a monorepo (e.g., with Turborepo) is the highest-leverage next step. This enables:
+- Code sharing and reuse (e.g., design system, auth, API clients)
+- Consistent developer experience and tooling
+- Easier dependency management and upgrades
+- Unified CI/CD and testing
+
+**How to get started:**
+1. Initialize a Turborepo monorepo (`npx create-turbo@latest`).
+2. Move this app into a `apps/` directory.
+3. Create a `packages/` directory for shared components, design system, and utilities.
+4. Update import paths and tooling (e.g., TypeScript, ESLint, Jest configs).
+5. Gradually migrate other Bilog apps into the monorepo.
+
+**Next Steps:**
+- Extract UI components from `components/ui` into a shared package.
+- Create a design system package for consistent branding and UX.
+- Centralize auth logic for all apps.
+
+---
+
+## License
+
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+
+---
+
+## Demo Credentials
+
+- **Admin**
+  - Email: `admin@example.com`
+  - Password: `123456`
+- **Patient**
+  - Email: `patient@example.com`
+  - Password: `123456`
+
+---
+
+## Centralized Typing & Data Validation
+
+- **Centralized Types**: All core types (users, appointments, time slots) are defined in a single place using Drizzle ORM and `drizzle-zod`. This ensures:
+  - Type safety across the entire stack (database, backend, frontend)
+  - Consistency and maintainability (no duplicated or out-of-sync types)
+  - Zod schemas are generated directly from the Drizzle schema, so validation and types are always in sync.
+
+---
+
+## UI Library
+
+- **shadcn/ui**: The UI is built using [shadcn/ui](https://ui.shadcn.com/), a modern, accessible, and customizable component library based on Radix UI and Tailwind CSS. This provides a strong foundation for usability, accessibility, and rapid development.
