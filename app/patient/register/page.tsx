@@ -2,8 +2,9 @@
 
 import { LoginLayout } from "@/components/login-layout"
 import { RegisterForm } from "@/components/auth/register-form"
-
+import { useAuth } from "@/hooks"
 export default function PatientRegisterPage() {
+  const { handleRegister } = useAuth()
   return (
     <LoginLayout>
       <RegisterForm
@@ -11,8 +12,8 @@ export default function PatientRegisterPage() {
         title="Patient Registration"
         description="Create an account to book dental appointments"
         submitText="Create Account"
-        redirectPath="/patient"
         loginPath="/patient/login"
+        onSubmit={handleRegister}
       />
     </LoginLayout>
   )

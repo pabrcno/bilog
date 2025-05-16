@@ -20,7 +20,7 @@ import { TimeSlotList } from "@/components/time-slot-list"
 import { AddTimeSlotForm } from "@/components/add-time-slot-form"
 import { StatusIndicator } from "@/components/ui/status-indicator"
 import { DateHeader } from "@/components/ui/date-header"
-import { useUser, useAppointments, useTimeSlots, useDateFormat } from "@/hooks"
+import { useUser, useAppointments, useTimeSlots, useDateFormat, useAuth } from "@/hooks"
 
 export default function AdminPage() {
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -57,11 +57,12 @@ export default function AdminPage() {
     isCreating
   } = useTimeSlots({ date, isAdmin: true })
 
+  const { handleLogout } = useAuth()
   // Get dialog text based on action type
   const dialogText = getDialogText()
 
   return (
-    <PageLayout userName={userName}>
+    <PageLayout userName={userName} onLogout={handleLogout}>
       <div className="container max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
           <div className="space-y-6">

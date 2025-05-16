@@ -1,14 +1,11 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { showError } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
 import { type LoginFormValues, loginSchema } from "@/db/schema"
 
 interface LoginFormProps {
@@ -16,10 +13,11 @@ interface LoginFormProps {
   title: string
   description: string
   submitText: string
-  redirectPath: string
   alternativeText: string
   alternativeLink: string
   alternativeLinkText: string
+  onSubmit: (values: LoginFormValues) => void
+  isSubmitting?: boolean
 }
 
 export function LoginForm({
@@ -27,13 +25,12 @@ export function LoginForm({
   title,
   description,
   submitText,
-  redirectPath,
   alternativeText,
   alternativeLink,
   alternativeLinkText,
+  onSubmit,
+  isSubmitting = false,
 }: LoginFormProps) {
-  const router = useRouter()
-
   // Initialize React Hook Form
   const { handleSubmit, register, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -43,24 +40,6 @@ export function LoginForm({
       role,
     },
   })
-
-  const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      router.push(redirectPath)
-      router.refresh()
-    },
-    onError: (error) => {
-      showError(error.message || "Login failed")
-    },
-  })
-
-  const onSubmit = (values: LoginFormValues) => {
-    loginMutation.mutate({
-      email: values.email,
-      password: values.password,
-      role,
-    })
-  }
 
   return (
     <Card className="w-full max-w-md">
@@ -95,8 +74,8 @@ export function LoginForm({
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" type="submit" disabled={loginMutation.isPending}>
-            {loginMutation.isPending ? "Logging in..." : submitText}
+          <Button className="w-full" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Logging in..." : submitText}
           </Button>
           <div className="text-center text-sm">
             {alternativeText}{" "}

@@ -2,8 +2,10 @@
 
 import { LoginLayout } from "@/components/login-layout"
 import { LoginForm } from "@/components/auth/login-form"
+import { useAuth } from "@/hooks"
 
 export default function AdminLoginPage() {
+  const { handleLogin } = useAuth()
   return (
     <LoginLayout>
       <LoginForm
@@ -11,10 +13,10 @@ export default function AdminLoginPage() {
         title="Dentist Login"
         description="Access your dental practice management dashboard"
         submitText="Login to Dashboard"
-        redirectPath="/admin"
         alternativeText="Not a dentist?"
         alternativeLink="/patient/login"
         alternativeLinkText="Patient Login"
+        onSubmit={handleLogin}
       />
     </LoginLayout>
   )

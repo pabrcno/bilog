@@ -1,14 +1,11 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { showError, showSuccess } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
 import { type RegisterFormValues, registerSchema } from "@/db/schema"
 
 interface RegisterFormProps {
@@ -16,13 +13,20 @@ interface RegisterFormProps {
   title: string
   description: string
   submitText: string
-  redirectPath: string
   loginPath: string
+  onSubmit: (values: RegisterFormValues) => void
+  isSubmitting?: boolean
 }
 
-export function RegisterForm({ role, title, description, submitText, redirectPath, loginPath }: RegisterFormProps) {
-  const router = useRouter()
-
+export function RegisterForm({ 
+  role, 
+  title, 
+  description, 
+  submitText, 
+  loginPath,
+  onSubmit,
+  isSubmitting = false
+}: RegisterFormProps) {
   // Initialize React Hook Form
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -34,41 +38,6 @@ export function RegisterForm({ role, title, description, submitText, redirectPat
       role,
     },
   })
-
-  const registerMutation = trpc.auth.register.useMutation({
-    onSuccess: (data) => {
-      showSuccess("Account created successfully")
-      // Automatically log in after registration
-      loginMutation.mutate({
-        email: data.email,
-        password: form.getValues("password"),
-        role,
-      })
-    },
-    onError: (error) => {
-      showError(error.message || "Registration failed")
-    },
-  })
-
-  const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      router.push(redirectPath)
-      router.refresh()
-    },
-    onError: () => {
-      // If login fails after registration, redirect to login page
-      router.push(loginPath)
-    },
-  })
-
-  const onSubmit = (values: RegisterFormValues) => {
-    registerMutation.mutate({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      role,
-    })
-  }
 
   return (
     <Card className="w-full max-w-md">
@@ -125,8 +94,8 @@ export function RegisterForm({ role, title, description, submitText, redirectPat
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" type="submit" disabled={registerMutation.isPending || loginMutation.isPending}>
-            {registerMutation.isPending ? "Creating Account..." : submitText}
+          <Button className="w-full" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating Account..." : submitText}
           </Button>
           <div className="text-center text-sm">
             Already have an account?{" "}

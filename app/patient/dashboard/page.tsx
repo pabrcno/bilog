@@ -19,7 +19,7 @@ import { TimeSlotList } from "@/components/time-slot-list"
 import { BookingConfirmationForm } from "@/components/booking-confirmation-form"
 import { StatusIndicator } from "@/components/ui/status-indicator"
 import { DateHeader } from "@/components/ui/date-header"
-import { useUser, useAppointments, useTimeSlots, useBooking, useDateFormat } from "@/hooks"
+import { useUser, useAppointments, useTimeSlots, useBooking, useDateFormat, useAuth } from "@/hooks"
 import { TimeSlot } from "@/db/schema"
 
 
@@ -57,6 +57,8 @@ export default function PatientDashboard() {
     openBookingDialog,
     handleBooking
   } = useBooking()
+  
+  const { handleLogout } = useAuth()
 
   // Type-safe wrapper for booking dialog
   const handleSelectSlot = (slot: TimeSlot & { dentist: { name: string } }) => {
@@ -64,7 +66,7 @@ export default function PatientDashboard() {
   }
 
   return (
-    <PageLayout userName={userName} >
+    <PageLayout userName={userName} onLogout={handleLogout}>
       <div className="container max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
           <div className="space-y-6">

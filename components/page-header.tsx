@@ -1,34 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut, SmileIcon as ToothIcon } from "lucide-react"
-import { showSuccess, showError } from "@/lib/toast"
-import { trpc } from "@/utils/trpc"
 
 interface PageHeaderProps {
   userName: string
+  onLogout: () => void
+  isLoggingOut?: boolean
 }
 
-export function PageHeader({ userName }: PageHeaderProps) {
-  const router = useRouter()
-
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => {
-      showSuccess("Logged out successfully")
-      router.push("/")
-      router.refresh()
-    },
-    onError: (error) => {
-      showError(error.message || "Failed to log out")
-    },
-  })
-
-  const handleLogout = async () => {
-    logoutMutation.mutate()
-  }
-
+export function PageHeader({ userName, onLogout, isLoggingOut = false }: PageHeaderProps) {
   return (
     <header className="bg-white border-b sticky top-0 z-10">
       <div className="container mx-auto py-4 px-4 sm:px-6">
@@ -45,8 +27,8 @@ export function PageHeader({ userName }: PageHeaderProps) {
               variant="ghost"
               size="icon"
               title="Logout"
-              onClick={handleLogout}
-              disabled={logoutMutation.isPending}
+              onClick={onLogout}
+              disabled={isLoggingOut}
             >
               <LogOut className="h-5 w-5" />
             </Button>
