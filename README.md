@@ -104,26 +104,18 @@ This project is a full-stack appointment booking system built with Next.js, tRPC
 
 ---
 
-## Implemented Next Step: Monorepo Architecture Recommendation
+## Implemented Next Step: Deployment to Vercel
 
 **Rationale:**
-Given the Bilog project's need to share UI components, utilities, and design patterns across multiple applications, adopting a monorepo (e.g., with Turborepo) is the highest-leverage next step. This enables:
-- Code sharing and reuse (e.g., design system, auth, API clients)
-- Consistent developer experience and tooling
-- Easier dependency management and upgrades
-- Unified CI/CD and testing
+Deploying to Vercel provides a seamless, scalable, and developer-friendly platform for hosting Next.js applications. Vercel offers automatic deployments, serverless infrastructure, built-in CDN, and easy integration with GitHub for CI/CD. This ensures fast, reliable delivery and a great developer experience with minimal configuration.
 
-**How to get started:**
-1. Initialize a Turborepo monorepo (`npx create-turbo@latest`).
-2. Move this app into a `apps/` directory.
-3. Create a `packages/` directory for shared components, design system, and utilities.
-4. Update import paths and tooling (e.g., TypeScript, ESLint, Jest configs).
-5. Gradually migrate other Bilog apps into the monorepo.
+
 
 **Next Steps:**
-- Extract UI components from `components/ui` into a shared package.
-- Create a design system package for consistent branding and UX.
-- Centralize auth logic for all apps.
+- Configure custom domains and SSL.
+- Set up environment variables for production.
+- Monitor deployments and performance using Vercel Analytics and Speed Insights.
+
 
 ---
 
