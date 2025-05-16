@@ -2,6 +2,8 @@
 
 This project is a full-stack appointment booking system built with Next.js, tRPC, Drizzle ORM, and a modern React UI. It is designed to handle user registration, authentication, appointment scheduling, and management for both patients and admins. The architecture and codebase are structured for scalability, maintainability, and extensibility, following best practices for modern web development.
 
+## Technical Docs
+https://deepwiki.com/pabrcno/bilog 
 ---
 
 ## Index
